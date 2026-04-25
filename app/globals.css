@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --color-bg: #050505;
+  --color-surface: #0d0d0d;
+  --color-surface-raised: #141414;
+
+  /* Type */
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #333333;
+
+  /* Accent — mint/cyan glow; GSAP will animate this var in Phase 5 */
+  --color-accent: #7cffcb;
+  --color-accent-muted: rgba(124, 255, 203, 0.08);
+
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
+
+  /* Motion */
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-cinematic: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-punch: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Reset & base ────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent FOUC — browser paints background before JS hydrates */
+html {
+  background-color: #050505;
+  /* Hide native scrollbar; Lenis manages the scrollable area */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Placeholder for Phase 3: custom cursor will set cursor: none here */
+/* html { cursor: none; } */
+
+/* ─── Phase 4 — Signal Layer ──────────────────────────────────────────────── */
+
+/*
+ * Position and opacity are driven by GSAP ticker in SignalStream.tsx.
+ * CSS owns only typography — no animation properties here.
+ *
+ * Keeping animation logic in JS eliminates the position-jump artifact
+ * that occurs when CSS animation-duration changes mid-cycle.
+ */
+
+/* Scan cursor — CSS handles the pulse since it's not velocity-coupled */
+@keyframes signal-scan-pulse {
+  0%   { opacity: 0.12; }
+  42%  { opacity: 0.55; }
+  58%  { opacity: 0.55; }
+  100% { opacity: 0.12; }
+}
+
+.signal-scan-cursor {
+  animation: signal-scan-pulse 4.2s ease-in-out infinite;
+}
+
+/* Typography only — transform/opacity owned by ticker */
+.signal-inner--primary {
+  font-family:     var(--font-mono), 'Geist Mono', monospace;
+  font-size:       10px;
+  letter-spacing:  0.28em;
+  color:           var(--color-text-tertiary);
+  text-transform:  uppercase;
+}
+
+.signal-inner--echo {
+  font-family:     var(--font-mono), 'Geist Mono', monospace;
+  font-size:       9px;
+  letter-spacing:  0.20em;
+  color:           rgba(124, 255, 203, 0.55); /* ticker will dim this via opacity */
+  text-transform:  uppercase;
+}
+
+/* ─── World container — explicit GPU compositing layer ───────────────────── */
+/*
+ * Each project world is always in the viewport during the pinned section.
+ * Explicit transform: translateZ(0) forces a compositing layer before GSAP
+ * starts animating, preventing the first-frame layer-promotion stutter.
+ * backface-visibility: hidden avoids subpixel rendering artifacts on rotation.
+ */
+.world-container {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ─── Utility layers ──────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Clip-path helpers for future reveal animations */
+  .clip-inset-full {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .clip-inset-none {
+    clip-path: inset(0 0% 0 0);
+  }
+
+  /* Preserve-3d for parallax depth layers */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  /* Backface hidden — prevents GPU flicker on transformed elements */
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* GPU-promotion hint — applied to elements GSAP will animate */
+  .will-transform {
+    will-change: transform;
+  }
+
+  /* Section containment — tells the browser repaints in this subtree
+     don't affect layout outside it. Reduces style-recalc scope. */
+  .contain-layout {
+    contain: layout style;
+  }
+}
+
+/* ─── Phase 5 — World-specific keyframes ─────────────────────────────────── */
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* vocterm: horizontal CRT scanline sweep */
+@keyframes crt-scan {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(100vh); }
+}
+
+/* Phase 8 — Contact Portal */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
+}
