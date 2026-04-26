@@ -6,6 +6,7 @@ import { SITE } from '@/lib/data/site'
 import { gsap } from '@/lib/animations/gsap.config'
 import { EASE, DURATION } from '@/lib/animations/easing'
 import { CalibrationNoise, type NoiseHandle } from './CalibrationNoise'
+import { PortraitReveal } from './PortraitReveal'
 
 // ─── Scramble engine ──────────────────────────────────────────────────────────
 
@@ -304,6 +305,17 @@ export function CalibrationHero() {
         ease: 'power2.in', duration: 0.45,
       }, 0.35)
 
+      // Portrait — dissolves in sync with glow (same virtual depth)
+      const portraitWrap = section.querySelector('[data-portrait-wrap]')
+      if (portraitWrap) {
+        exitTl.to(portraitWrap, {
+          opacity: 0,
+          filter: 'blur(22px)',
+          ease: 'power2.in',
+          duration: 0.48,
+        }, 0.28)
+      }
+
       // Noise surges as identity dissolves
       exitTl.to(noiseExit, {
         v: 0.20,
@@ -422,6 +434,9 @@ export function CalibrationHero() {
           transformOrigin: 'center center',
         }}
       />
+
+      {/* ── Portrait reveal — z=5, between glow and text ── */}
+      <PortraitReveal />
 
       {/* ── Main content ── */}
       <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-[1600px]">
