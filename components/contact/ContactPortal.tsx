@@ -262,7 +262,7 @@ export function ContactPortal() {
   const cards = [
     { command: '$ connect --channel email',   label: SITE.contact.email,                        url: `mailto:${SITE.contact.email}`, accent: '#4ade80', copy: SITE.contact.email },
     { command: '$ open --profile linkedin',   label: 'linkedin.com/in/sooryasijin',             url: SITE.contact.links[1].url,       accent: '#60a5fa' },
-    { command: '$ open --profile github',     label: 'github.com/sooryasijin',                  url: SITE.contact.links[2].url,       accent: '#a78bfa' },
+    { command: '$ open --profile github',     label: 'github.com/cryptic-soorya',                  url: SITE.contact.links[2].url,       accent: '#a78bfa' },
   ]
 
   return (
