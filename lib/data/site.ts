@@ -41,7 +41,7 @@ export const SITE: SiteData = {
     links: [
       { label: 'Email', url: 'mailto:sijinsoorya@gmail.com' },
       { label: 'LinkedIn', url: 'https://linkedin.com/in/sooryasijin' },
-      { label: 'GitHub', url: 'https://github.com/sooryasijin' },
+      { label: 'GitHub', url: 'https://github.com/cryptic-soorya' },
     ],
   },
 
